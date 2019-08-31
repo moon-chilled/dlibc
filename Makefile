@@ -1,5 +1,5 @@
 DC ?= dmd
-DFLAGS := -betterC 
+DFLAGS := -betterC -O
 LD ?= ld
 LDFLAGS :=
 
