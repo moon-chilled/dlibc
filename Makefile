@@ -1,15 +1,19 @@
 DC ?= dmd
-DFLAGS := -betterC -O
+DFLAGS := -betterC -O -Isrc/
 LD ?= ld
 LDFLAGS :=
 
+OBJ := src/plat_version.o src/start.o src/syscaller.o src/unistd.o src/linux/unistd.o
+
 default: all
 
-all: start.o
-	$(LD) $(LDFLAGS) -o start start.o
+.SUFFIXES: .d
 
-start.o: start.d
-	$(DC) $(DFLAGS) -c -of=start.o start.d
+.d.o:
+	$(DC) -c $(DFLAGS) -of=$@ $<
+
+all: $(OBJ)
+	$(LD) $(LDFLAGS) -o start $(OBJ)
 
 clean:
-	rm -f start.o start
+	rm -f start $(OBJ)
