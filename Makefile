@@ -1,6 +1,5 @@
-AS ?= as
-ASFLAGS :=
-
+DC ?= dmd
+DFLAGS := -betterC 
 LD ?= ld
 LDFLAGS :=
 
@@ -9,5 +8,8 @@ default: all
 all: start.o
 	$(LD) $(LDFLAGS) -o start start.o
 
-start.o: start.S
-	$(AS) -o start.o start.S
+start.o: start.d
+	$(DC) $(DFLAGS) -c -of=start.o start.d
+
+clean:
+	rm -f start.o start
