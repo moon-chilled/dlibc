@@ -9,7 +9,7 @@ LDFLAGS :=
 PLAT := linux
 ARCH := amd64
 
-linux_OBJ := src/linux/unistd.o src/linux/stdio.o
+linux_OBJ := src/linux/unistd.o src/linux/stdio.o src/linux/libc.o
 
 START_OBJ := src/$(PLAT)/start_$(ARCH).o
 OBJ := src/plat_version.o src/syscaller.o src/unistd.o $($(PLAT)_OBJ)

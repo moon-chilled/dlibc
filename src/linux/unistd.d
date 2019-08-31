@@ -17,6 +17,9 @@ static if (plat_arch == Architecture.AMD64) {
 		syscall(60, status);
 	}
 
+	ptrdiff_t read(int fd, const void *buf, size_t count) {
+		return syscall(0, fd, buf, count);
+	}
 	ptrdiff_t write(int fd, const void *buf, size_t count) {
 		return syscall(1, fd, buf, count);
 	}
