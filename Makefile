@@ -1,7 +1,7 @@
 DC ?= dmd
 # TODO: figure out how to turn off -fPIC for static builds
 # TODO: ldc uses -relocation-model=pic
-DFLAGS := -betterC -O -Isrc/ -fPIC
+DFLAGS := -betterC -O -Isrc/ -fPIC -g
 LD ?= ld
 LDFLAGS :=
 
@@ -9,8 +9,10 @@ LDFLAGS :=
 PLAT := linux
 ARCH := amd64
 
+linux_OBJ := src/linux/unistd.o src/linux/stdio.o
+
 START_OBJ := src/$(PLAT)/start_$(ARCH).o
-OBJ := src/plat_version.o src/syscaller.o src/unistd.o src/linux/unistd.o
+OBJ := src/plat_version.o src/syscaller.o src/unistd.o $($(PLAT)_OBJ)
 ALL_OBJ := $(OBJ) $(START_OBJ)
 
 default: all

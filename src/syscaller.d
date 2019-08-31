@@ -24,8 +24,13 @@ static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
 					 args[" ~ i.stringof ~ "];
 				}");
 		}
-		asm { syscall; }
 
-		asm { ret; }
+		long ret;
+		asm {
+			syscall;
+			mov ret, RAX;
+		}
+
+		return ret;
 	}
 }
