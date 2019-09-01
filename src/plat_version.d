@@ -6,6 +6,7 @@ enum Architecture {
 
 enum OS {
 	Linux,
+	FreeBSD,
 }
 
 version (X86_64) {
@@ -16,6 +17,8 @@ version (X86_64) {
 
 version (linux) {
 	enum plat_os = OS.Linux;
+} else version (FreeBSD) {
+	enum plat_os = OS.FreeBSD;
 } else {
-	pragma(error, "Unsupported os");
+	static assert(0, "Unsupported os");
 }
