@@ -24,14 +24,11 @@ static if ((plat_os == OS.Linux || plat_os == OS.FreeBSD) && plat_arch == Archit
 					 args[" ~ i.stringof ~ "];
 				}");
 		}
-		static if (plat_os == OS.FreeBSD) {
-			asm {
-				mov R10, RCX;
-			}
-		}
 
 		asm {
 			syscall;
+			mov RSP, RBP;
+			pop RBP;
 			ret;
 		}
 	}
