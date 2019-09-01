@@ -1,0 +1,19 @@
+Stuff implemented:
+
+Cross-platform:
+ -
+
+Linux:
+ - start
+ - open, close, read, write
+ - exit and friends
+ - __stack_chk_fail()
+
+FreeBSD:
+ - start
+ - read, write
+ - exit
+
+
+Win32:
+ - 

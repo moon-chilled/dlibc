@@ -14,11 +14,11 @@ LDFLAGS :=
 PLAT := linux
 ARCH := amd64
 
-linux_OBJ := src/linux/unistd.o src/linux/stdio.o src/linux/libc.o
+linux_OBJ := src/linux/unistd.o src/linux/stdio.o src/linux/libc.o src/linux/fcntl.o
 freebsd_OBJ := src/freebsd/unistd.o
 
 START_OBJ := src/$(PLAT)/start_$(ARCH).o
-OBJ := src/plat_version.o src/syscaller.o src/unistd.o $($(PLAT)_OBJ)
+OBJ := src/plat_version.o src/syscaller.o src/unistd.o src/fcntl.o $($(PLAT)_OBJ)
 ALL_OBJ := $(OBJ) $(START_OBJ)
 
 default: all
