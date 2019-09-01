@@ -25,12 +25,9 @@ static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
 				}");
 		}
 
-		long ret;
 		asm {
 			syscall;
-			mov ret, RAX;
+			ret;
 		}
-
-		return ret;
 	}
 }

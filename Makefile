@@ -1,7 +1,12 @@
 DC ?= dmd
 # TODO: figure out how to turn off -fPIC for static builds
-# TODO: ldc uses -relocation-model=pic
-DFLAGS := -betterC -O -Isrc/ -fPIC -g
+DFLAGS := -betterC -O -Isrc/ -g
+ifeq ($(DC),ldc)
+	DFLAGS += -relocation-model=pic
+else
+	DFLAGS += -fPIC
+endif
+
 LD ?= ld
 LDFLAGS :=
 
