@@ -1,7 +1,10 @@
 module syscaller;
 
 import plat_version;
+import errnor;
 
+//TODO: fix error detection under freebsd (on error, it sets carry flag and puts the error code into rax)
+//TODO: no compiler likes inlining functions which have inline asm, so turn this into a mixin template
 static if ((plat_os == OS.Linux || plat_os == OS.FreeBSD) && plat_arch == Architecture.AMD64) {
 	long syscall(T...)(long which, T args) {
 		enum param_regs64 = ["RDI", "RSI", "RDX", "R10",  "R8",   "R9"];
@@ -25,11 +28,27 @@ static if ((plat_os == OS.Linux || plat_os == OS.FreeBSD) && plat_arch == Archit
 				}");
 		}
 
+
+		long ret_from_syscall;
 		asm {
 			syscall;
+
+			cmp RAX, -4096;
+			jl error;
+
 			mov RSP, RBP;
 			pop RBP;
 			ret;
+
+			// mov errno, -RAX does not work because errno is global and we are PIC.
+			// The error path is not performance-critical so I'm ok with this moderate
+			// indirection.  Fixes could include figuring out how to PIC from assembly
+			// or giving up PIC and forcing only static linkage, but I think this is fine.
+error:
+			mov ret_from_syscall, RAX;
 		}
+
+		errno = cast(int)-ret_from_syscall;
+		return -1;
 	}
 }
