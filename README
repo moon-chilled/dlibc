@@ -1,3 +1,6 @@
-Currently only has basic support for amd64 linux.  Future support for amd64
-freebsd, x86 and amd64 win32, and then maybe more exotic things.  Other
-architectures pending ldc or gdc not being super broken.
+Currently only has basic support for amd64 linux.  AMD64 freebsd has some basic
+stuff in src/freebsd and syscaller.d, but that's mostly just as a reference for
+my future self of basic-but-easy-to-look-up things when I get around to
+properly implementing it.  Future support for x86 and amd64 win32, and then
+maybe more exotic things.  Other architectures pending ldc or gdc not being
+super broken.
