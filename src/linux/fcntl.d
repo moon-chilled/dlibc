@@ -10,9 +10,9 @@ static if (plat_arch == Architecture.AMD64) {
 	// but the third argument fits in a register so it doesn't mess up the
 	// stack to do this.  Yay.
 	int open(const char *path, int flags, uint mode) {
-		return cast(int)syscall(2, path, flags, mode);
+		return cast(int)syscall!2(path, flags, mode);
 	}
 	void close(int fd) {
-		syscall(3, fd);
+		syscall!3(fd);
 	}
 }

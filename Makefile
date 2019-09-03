@@ -1,14 +1,16 @@
+LD ?= ld
+LDFLAGS :=
+
 DC ?= dmd
 # TODO: figure out how to turn off -fPIC for static builds
 DFLAGS := -betterC -O -Isrc/ -g
 ifeq ($(DC),ldc)
-	DFLAGS += -relocation-model=pic
+	DFLAGS += -relocation-model=pic -flto=full
+	LD := clang
+	LDFLAGS += -flto=full -nodefaultlibs
 else
 	DFLAGS += -fPIC
 endif
-
-LD ?= ld
-LDFLAGS :=
 
 #TODO: autodetect these
 PLAT := linux
@@ -34,7 +36,7 @@ static: $(ALL_OBJ)
 	ar rcs libdlibc.a $(ALL_OBJ)
 
 dynamic: $(OBJ)
-	ld -shared -o libdlibc.so $(OBJ)
+	$(LD) $(LDFLAGS) -shared -o libdlibc.so $(OBJ)
 
 clean:
-	rm -f libdlibc.so libdlibc.a $(OBJ)
+	rm -f libdlibc.so libdlibc.a $(ALL_OBJ)

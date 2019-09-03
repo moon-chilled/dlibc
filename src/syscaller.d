@@ -3,33 +3,33 @@ module syscaller;
 import plat_version;
 import errnor;
 
-//TODO: fix error detection under freebsd (on error, it sets carry flag and puts the error code into rax)
+//TODO:	fix error detection under freebsd (on error, it sets carry flag and puts the error code into rax)
+//	probably want to bring it out into its own function, even if it's mostly the same, in order to
+//	avoid too much branching in something that's already too complicated for its own good (like this)
+
 //TODO: no compiler likes inlining functions which have inline asm, so turn this into a mixin template
 static if ((plat_os == OS.Linux || plat_os == OS.FreeBSD) && plat_arch == Architecture.AMD64) {
-	long syscall(T...)(long which, T args) {
-		enum param_regs64 = ["RDI", "RSI", "RDX", "R10",  "R8",   "R9"];
-		enum param_regs32 = ["EDI", "ESI", "EDX", "R10D", "R8D", "R9D"];
-		enum param_regs16 = ["DI",  "SI",  "DX",  "R10W", "R8W", "R9W"];
-		enum param_regs08 = ["DIL", "SIL", "DL",  "R10B", "R8B", "R9B"];
-		enum param_regserror = []; // indexing into this should cause a compile-time error
+	pragma(inline, false) extern (C) long syscall(long which, T...)(T args) {
+		long ret_from_syscall;
 
 		asm {
 			mov RAX, which;
 		}
 
-		static foreach (i; 0 .. args.length) {
-			mixin("asm {
-				mov " ~ ((args[i].sizeof == 8) ? param_regs64 :
-					 (args[i].sizeof == 4) ? param_regs32 :
-					 (args[i].sizeof == 2) ? param_regs16 :
-					 (args[i].sizeof == 1) ? param_regs08 :
-					 param_regserror)[i] ~ ",
-					 args[" ~ i.stringof ~ "];
-				}");
+		/*
+		 * as it turns out, by a mad co-incidence (;o), the parameter
+		 * locations for syscalls (under linux/fbsd) and for calling
+		 * functions (under sysv/amd64) is almost the same.  The only
+		 * difference is the 4th parameter, which is R10 for syscalls
+		 * but RCX for functions.  That means that all the other
+		 * parameters are /already where they need to be/!  Magic!!
+		 */
+		static if (args.length >= 4) {
+			asm {
+				mov R10, RCX;
+			}
 		}
 
-
-		long ret_from_syscall;
 		asm {
 			syscall;
 
