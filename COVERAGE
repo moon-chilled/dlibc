@@ -1,7 +1,9 @@
 Stuff implemented:
 
 Cross-platform:
- -
+ - strcmp, strncmp
+ - fopen, fclose
+ - stdin, stdout, stdio
 
 Linux:
  - start

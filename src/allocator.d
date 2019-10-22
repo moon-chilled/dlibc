@@ -1,4 +1,4 @@
-module stdio;
+module allocator;
 
 // Shamelessly stolen from freebsd; libexec/rtld-elf/rtld_malloc.c
 // TODO: maybe replace with https://github.com/mjansson/rpmalloc or similar?
@@ -8,9 +8,7 @@ module stdio;
 // (Or maybe write my own malloc)
 
 // Copyright notice follows:
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1983 Regents of the University of California.
  * All rights reserved.
  *
