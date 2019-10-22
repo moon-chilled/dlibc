@@ -128,7 +128,7 @@ private int pagebucket;			/* page size bucket */
 void *malloc(size_t nbytes) {
 	Overhead *op;
 	int bucket;
-	ptrdiff_t n;
+	ssize_t n;
 	size_t amt;
 
 	/*

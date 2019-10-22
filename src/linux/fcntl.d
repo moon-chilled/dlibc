@@ -7,11 +7,12 @@ extern (C):
 
 static if (plat_arch == Architecture.AMD64) {
 	enum {
-		O_RDONLY = 0,
-		O_WRONLY = 1,
-		O_RDWR = 2,
+		O_RDONLY = 0x0,
+		O_WRONLY = 0x1,
+		O_RDWR = 0x2,
 		O_CREAT = 0x40,
 		O_TRUNC = 0x200,
+		O_APPEND = 0x400,
 	}
 
 	// the official signature of open is int(const char*, int, ...)

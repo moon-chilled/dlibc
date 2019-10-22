@@ -22,3 +22,6 @@ version (linux) {
 } else {
 	static assert(0, "Unsupported os");
 }
+
+
+alias ssize_t = ptrdiff_t;

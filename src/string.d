@@ -59,3 +59,9 @@ int strncmp(const(char) *s1, const (char) *s2, size_t n) {
 
 	assert(0); // stupid compiler
 }
+// TODO: make fast
+size_t strlen(const(char) *s) {
+	size_t ret;
+	while (*s++) ret++;
+	return ret;
+}

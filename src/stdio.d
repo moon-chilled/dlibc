@@ -34,8 +34,16 @@ FILE *fopen(const(char) *pathname, const(char) *mode) {
 	//TODO: handle 'b' correctly on windows (do newline re-adjustment unless 'b' is there)
 	if (!strcmp(mode, "r") || !strcmp(mode, "rb")) {
 		flags = O_RDONLY;
-	} else if (!strcmp(mode, "r+") || !strcmp(mode, "r+b") || !strcmp(mode, "rb+")) {
+	} else if (!strcmp(mode, "r+") || !strcmp(mode, "rb+") || !strcmp(mode, "r+b")) {
 		flags = O_RDWR;
+	} else if (!strcmp(mode, "w") || !strcmp(mode, "wb")) {
+		flags = O_WRONLY | O_CREAT | O_TRUNC;
+	} else if (!strcmp(mode, "w+") || !strcmp(mode, "wb+") || !strcmp(mode, "w+b")) {
+		flags = O_RDWR | O_CREAT | O_TRUNC;
+	} else if (!strcmp(mode, "a") || !strcmp(mode, "ab")) {
+		flags = O_WRONLY | O_CREAT | O_APPEND;
+	} else if (!strcmp(mode, "a+") || !strcmp(mode, "ab+") || !strcmp(mode, "a+b")) {
+		flags = O_RDWR | O_CREAT | O_APPEND;
 	} else {
 		errno = EINVAL;
 		return null;
@@ -68,6 +76,45 @@ int fclose(FILE *stream) {
 	free(stream);
 	return 0;
 }
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	// size * nmemb would overflow
+	if (size > (size_t.max / nmemb)) {
+		return 0;
+	}
+	// no point in doing anything
+	if ((size * nmemb) == 0) {
+		return 0;
+	}
+
+	ssize_t bytes_read = read(stream.fd, ptr, size * nmemb);
+	if (bytes_read == 0) {
+		// stream.eof = true
+	} else if (bytes_read < 0) {
+		// TODO: check errno, act appropriately
+		return 0;
+	}
+
+	return bytes_read / size;
+}
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	// overflow
+	if (size > (size_t.max / nmemb)) {
+		return 0;
+	}
+	// pointless
+	if ((size * nmemb) == 0) {
+		return 0;
+	}
+
+	ssize_t bytes_written = write(stream.fd, ptr, size * nmemb);
+	if (bytes_written < 0) {
+		//TODO: handle errno
+		return 0;
+	}
+
+	return bytes_written / size;
+}
+
 
 /*
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
