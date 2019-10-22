@@ -83,7 +83,74 @@ int fclose(FILE *stream) {
 	free(stream);
 	return 0;
 }
-size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+
+
+//TODO: automatically generate these locked stdio funcs
+
+// !IMPORTANT!
+// all stdio is implemented in terms of the *_unlocked() functions
+// at no point should a _unlocked() function _EVER_ generate a call to a stdio
+// function which isn't _unlocked().  Otherwise, the whole program will freeze up.
+
+// int getc_unlocked(FILE *stream)
+// int getchar_unlocked();
+// putc has the same behaviour as fputc, except that is may be a macro that evaluates its stream multiple times.
+// so: the platform may implement it in a header, but in case it doesn't: here you go
+// alias putc_unlocked = fputc_unlocked
+// int putchar_unlocked(int c)
+
+// int clearerr_unlocked(FILE *stream)
+int feof_unlocked(FILE *stream) {
+	return stream.eof;
+}
+int function(FILE*) feof = &feof_unlocked;
+
+//TODO: set appropriately
+int ferror_unlocked(FILE *stream) {
+	return stream.error;
+}
+int function(FILE*) ferror = &ferror_unlocked;
+
+int fileno_unlocked(FILE *stream) {
+	return stream.fd;
+}
+int function(FILE*) fileno = &fileno_unlocked;
+
+//TODO: add buffering so this is useful
+int fflush_unlocked(FILE *stream) {
+	// or other reasons why stream might be bad
+	if (!stream) {
+		errno = EBADF;
+		return EOF;
+	}
+
+	return 0;
+}
+int fflush(FILE *stream) {
+	flockfile(stream);
+	auto ret = fflush_unlocked(stream);
+	funlockfile(stream);
+	return ret;
+}
+
+// int fgetc_unlocked(FILE *stream)
+
+int fputc_unlocked(int c, FILE *stream) {
+	char r = cast(char)c;
+	if (!fwrite_unlocked(&r, 1, 1, stream)) {
+		return EOF;
+	} else {
+		return c;
+	}
+}
+int fputc(int c, FILE *stream) {
+	flockfile(stream);
+	auto ret = fputc_unlocked(c, stream);
+	funlockfile(stream);
+	return ret;
+}
+
+size_t fread_unlocked(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 	// size * nmemb would overflow
 	if (size > (size_t.max / nmemb)) {
 		return 0;
@@ -103,7 +170,14 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 
 	return bytes_read / size;
 }
-size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	flockfile(stream);
+	auto ret = fread_unlocked(ptr, size, nmemb, stream);
+	funlockfile(stream);
+	return ret;
+}
+
+size_t fwrite_unlocked(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 	// overflow
 	if (size > (size_t.max / nmemb)) {
 		return 0;
@@ -121,32 +195,19 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 
 	return bytes_written / size;
 }
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	flockfile(stream);
+	auto ret = fwrite_unlocked(ptr, size, nmemb, stream);
+	funlockfile(stream);
+	return ret;
+}
 
-//TODO: add buffering so this is useful
-int fflush(FILE *stream) {
-	// or other reasons why stream might be bad
-	if (!stream) {
-		errno = EBADF;
-		return EOF;
-	}
 
-	return 0;
+//TODO: make this work once threads are a thing
+void flockfile(FILE *filehandle) {
 }
-int feof(FILE *stream) {
-	return stream.eof;
+int ftrylockfile(FILE *filehandle) {
+	return 0; // 1 => failure (can't obtain lock)
 }
-int fileno(FILE *stream) {
-	return stream.fd;
-}
-//TODO: set appropriately
-int ferror(FILE *stream) {
-	return stream.error;
-}
-int fputc(int c, FILE *stream) {
-	char r = cast(char)c;
-	if (!fwrite(&r, 1, 1, stream)) {
-		return EOF;
-	} else {
-		return c;
-	}
+void funlockfile(FILE *filehandle) {
 }

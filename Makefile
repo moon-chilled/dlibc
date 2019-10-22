@@ -16,7 +16,7 @@ endif
 PLAT := linux
 ARCH := amd64
 
-linux_OBJ := src/linux/unistd.o src/linux/stdio.o src/linux/libc.o src/linux/fcntl.o src/linux/sys_mman.o
+linux_OBJ := src/linux/unistd.o src/linux/stdio.o src/linux/libc.o src/linux/fcntl.o src/linux/sys_mman.o src/linux/sched.o
 freebsd_OBJ := src/freebsd/unistd.o
 
 START_OBJ := src/$(PLAT)/start_$(ARCH).o
