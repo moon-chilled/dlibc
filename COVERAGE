@@ -2,7 +2,7 @@ Stuff implemented:
 
 Cross-platform:
  - strcmp, strncmp
- - fopen, fclose, fread, fwrite
+ - fopen, fclose, fread, fwrite, fflush, feof, fileno, ferror, fputc
  - stdin, stdout, stderr
 
 Linux:

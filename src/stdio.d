@@ -18,8 +18,13 @@ __gshared extern (C):
 // stdio.h says 'extern FILE __sF[]; #define stdin   (&__sF[0])' (then stdout,
 // stderr in following indices)
 
+//TODO: once threading is a thing, we need to add locks everywhere and add
+// *_unlocked() variants of everything
+
 struct FILE {
 	int fd;
+	bool eof = false;
+	bool error = false;
 }
 FILE __stdin = {fd:0};
 FILE __stdout = {fd:1};
@@ -27,6 +32,8 @@ FILE __stderr = {fd:2};
 FILE *stdin = &__stdin;
 FILE *stdout = &__stdout;
 FILE *stderr = &__stderr;
+
+enum EOF = -1;
 
 FILE *fopen(const(char) *pathname, const(char) *mode) {
 	int flags;
@@ -68,7 +75,7 @@ int fclose(FILE *stream) {
 		return -1;
 	}
 
-	if (close(stream.fd) < 0) {
+	if ((fflush(stream) < 0) || (close(stream.fd) < 0)) {
 		free(stream);
 		return -1;
 	}
@@ -88,7 +95,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 
 	ssize_t bytes_read = read(stream.fd, ptr, size * nmemb);
 	if (bytes_read == 0) {
-		// stream.eof = true
+		stream.eof = true;
 	} else if (bytes_read < 0) {
 		// TODO: check errno, act appropriately
 		return 0;
@@ -115,8 +122,31 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 	return bytes_written / size;
 }
 
+//TODO: add buffering so this is useful
+int fflush(FILE *stream) {
+	// or other reasons why stream might be bad
+	if (!stream) {
+		errno = EBADF;
+		return EOF;
+	}
 
-/*
-size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
-	if (
-	*/
+	return 0;
+}
+int feof(FILE *stream) {
+	return stream.eof;
+}
+int fileno(FILE *stream) {
+	return stream.fd;
+}
+//TODO: set appropriately
+int ferror(FILE *stream) {
+	return stream.error;
+}
+int fputc(int c, FILE *stream) {
+	char r = cast(char)c;
+	if (!fwrite(&r, 1, 1, stream)) {
+		return EOF;
+	} else {
+		return c;
+	}
+}
