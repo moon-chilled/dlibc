@@ -18,9 +18,6 @@ __gshared extern (C):
 // stdio.h says 'extern FILE __sF[]; #define stdin   (&__sF[0])' (then stdout,
 // stderr in following indices)
 
-//TODO: once threading is a thing, we need to add locks everywhere and add
-// *_unlocked() variants of everything
-
 struct FILE {
 	int fd;
 	bool eof = false;
@@ -92,14 +89,38 @@ int fclose(FILE *stream) {
 // at no point should a _unlocked() function _EVER_ generate a call to a stdio
 // function which isn't _unlocked().  Otherwise, the whole program will freeze up.
 
-// int getc_unlocked(FILE *stream)
-// int getchar_unlocked();
-// putc has the same behaviour as fputc, except that is may be a macro that evaluates its stream multiple times.
-// so: the platform may implement it in a header, but in case it doesn't: here you go
-// alias putc_unlocked = fputc_unlocked
+// getc has the same behaviour as fgetc, except that is may be a macro that evaluates its stream multiple times.
+// so the platform may implement it in a header, but in case it doesn't: here you go
+int function(FILE*) getc_unlocked = &fgetc_unlocked;
+int function(FILE*) getc = &fgetc;
+
+int getchar_unlocked() {
+	return getc_unlocked(stdin);
+}
+int getchar() {
+	flockfile(stdin);
+	auto ret = getchar_unlocked();
+	funlockfile(stdin);
+	return ret;
+}
+
+// putc is analogous to getc
+int function(int, FILE*) putc_unlocked = &fputc_unlocked;
+int function(int, FILE*) putc = &fputc;
+
 // int putchar_unlocked(int c)
+int putchar_unlocked(int c) {
+	return fputc(c, stdout);
+}
+int putchar(int c) {
+	flockfile(stdout);
+	auto ret = putchar_unlocked(c);
+	funlockfile(stdout);
+	return ret;
+}
 
 // int clearerr_unlocked(FILE *stream)
+
 int feof_unlocked(FILE *stream) {
 	return stream.eof;
 }
@@ -133,7 +154,17 @@ int fflush(FILE *stream) {
 	return ret;
 }
 
-// int fgetc_unlocked(FILE *stream)
+int fgetc_unlocked(FILE *stream) {
+	char ret;
+	fread(&ret, 1, 1, stream);
+	return ret;
+}
+int fgetc(FILE *stream) {
+	flockfile(stream);
+	auto ret = getc_unlocked(stream);
+	funlockfile(stream);
+	return ret;
+}
 
 int fputc_unlocked(int c, FILE *stream) {
 	char r = cast(char)c;

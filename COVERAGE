@@ -2,7 +2,8 @@ Stuff implemented:
 
 Cross-platform:
  - strcmp, strncmp
- - fopen, fclose, fread, fwrite, fflush, feof, fileno, ferror, fputc
+ - fopen, fclose, getc, getchar, putc, putchar, feof, fileno, fflush, fputc, fread, fwrite, *_unlocked() variants
+ - STUBBED: flockfile, ftrylock, funlockfile, ferror
  - stdin, stdout, stderr
 
 Linux:
