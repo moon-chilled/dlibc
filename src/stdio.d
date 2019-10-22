@@ -32,9 +32,9 @@ FILE *fopen(const(char) *pathname, const(char) *mode) {
 	int flags;
 
 	//TODO: handle 'b' correctly on windows (do newline re-adjustment unless 'b' is there)
-	if (!strcmp(mode, "r\0".ptr) || !strcmp(mode, "rb\0".ptr)) {
+	if (!strcmp(mode, "r") || !strcmp(mode, "rb")) {
 		flags = O_RDONLY;
-	} else if (!strcmp(mode, "r+\0".ptr) || !strcmp(mode, "r+b\0".ptr) || !strcmp(mode, "rb+\0".ptr)) {
+	} else if (!strcmp(mode, "r+") || !strcmp(mode, "r+b") || !strcmp(mode, "rb+")) {
 		flags = O_RDWR;
 	} else {
 		errno = EINVAL;
