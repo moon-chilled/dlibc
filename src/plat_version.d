@@ -23,5 +23,9 @@ version (linux) {
 	static assert(0, "Unsupported os");
 }
 
+T max(T)(T a, T b) {
+	if (a > b) return a;
+	else return b;
+}
 
 alias ssize_t = ptrdiff_t;

@@ -28,9 +28,10 @@ static if (plat_arch == Architecture.AMD64) {
 
 	enum MAP_FAILED = cast(void*)-1;
 
-	void *mmap(void *addr, size_t len, int prot, int flags, int filedes, ulong off) {
+	void *mmap64(void *addr, size_t len, int prot, int flags, int filedes, ulong off) {
 		return cast(void*)syscall!9(addr, len, prot, flags, filedes, off);
 	}
+
 	int mprotect(void *addr, size_t len, int prot) {
 		return cast(int)syscall!10(addr, len, prot);
 	}

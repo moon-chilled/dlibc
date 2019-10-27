@@ -8,5 +8,6 @@ static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
 	enum {
 		EBADF = 9,
 		EINVAL = 22,
+		ERANGE = 34,
 	}
 }
