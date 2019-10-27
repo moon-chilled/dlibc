@@ -31,6 +31,7 @@ static if (plat_arch == Architecture.AMD64) {
 	void *mmap64(void *addr, size_t len, int prot, int flags, int filedes, ulong off) {
 		return cast(void*)syscall!9(addr, len, prot, flags, filedes, off);
 	}
+	void *function(void*, size_t, int, int, int, ulong) mmap = &mmap64;
 
 	int mprotect(void *addr, size_t len, int prot) {
 		return cast(int)syscall!10(addr, len, prot);
