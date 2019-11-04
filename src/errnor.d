@@ -3,7 +3,7 @@ module errnor;
 import plat_version;
 
 extern (C):
-__gshared int errno;
+int errno;
 
 static if (plat_os == OS.Linux) {
 	int *__errno_location() {
