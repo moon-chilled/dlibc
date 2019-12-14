@@ -99,10 +99,25 @@ char *strcpy(char *dest, const(char) *src) {
 
 // strerror() comes from dlibc.internal.<plat>.errno_, because different platforms have different sets of error codes
 
-int strerror_r(int errnum, char *buf, size_t buflen) {
+int __xsi_strerror_r(int errnum, char *buf, size_t buflen) {
 	char *ret = strerror(errnum);
 	size_t len;
 	memcpy(buf, ret, max(len = strlen(ret), buflen));
 	if (len > buflen) return errno = Errno.ERANGE;
 	return 0;
+}
+
+char *__gnu_strerror_r(int errnum, char *buf, size_t buflen) {
+	char *ret = strerror(errnum);
+	size_t len;
+	memcpy(buf, ret, max(strlen(ret), buflen));
+	return buf;
+}
+
+static if (plat_os == OS.Linux) {
+	// TODO: on musl, strerror_r() is __xsi_strerror_r(), and there is no __gnu_strerror_r().
+	int function(int, char*, size_t) __xpg_strerror_r = &__xsi_strerror_r;
+	char *function(int, char*, size_t) strerror_r = &__gnu_strerror_r;
+} else static if (plat_os == OS.FreeBSD /*|| plat_os == OS.OpenBSD*/) {
+	int function(int, char*, size_t) strerror_r = &__xsi_strerror_r;
 }

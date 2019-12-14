@@ -144,7 +144,7 @@ char *strerror(int num) {
 		case Errno.ENOTRECOVERABLE: strcpy(ret.ptr, "State not recoverable."); break;
 		case Errno.ERFKILL: strcpy(ret.ptr, "Operation not possible due to RF-kill."); break;
 		case Errno.EHWPOISON: strcpy(ret.ptr, "Memory page has hardware error."); break;
-		default: errno = Errno.EINVAL; strcpy(ret.ptr, "Invalid error code."); break; // sprintf(ret.ptr, "Invalid error code %s.", num)
+		default: errno = Errno.EINVAL; strcpy(ret.ptr, "Unknown error."); break; // sprintf(ret.ptr, "Unknown error: %d", num)
 	}
 
 	return ret.ptr;
