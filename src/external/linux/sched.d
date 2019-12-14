@@ -1,4 +1,4 @@
-module dlibc.external.linux.sched;
+module linux.sched;
 
 import plat_version;
 import syscaller;

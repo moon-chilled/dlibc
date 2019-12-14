@@ -1,9 +1,10 @@
-module dlibc.external.linux.sys_mman;
+module linux.sys_mman;
 
 import plat_version;
 import syscaller;
 
 extern (C):
+__gshared:
 
 static if (plat_arch == Architecture.AMD64) {
 	enum {

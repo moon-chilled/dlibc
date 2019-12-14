@@ -1,4 +1,5 @@
 - Unittests
 - Threading
+ - Then: TLS.  Specifically: errno.  Also get rid of gshared in strerror().
 - MVP: run 'hello world' in standard d
 - Binary musl compatibility?

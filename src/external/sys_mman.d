@@ -1,4 +1,4 @@
-module dlibc.external.sys_mman;
+module sys_mman;
 
 import plat_version;
 

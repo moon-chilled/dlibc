@@ -1,4 +1,4 @@
-module dlibc.external.assert_;
+module assert_;
 
 import plat_version;
 import unistd;

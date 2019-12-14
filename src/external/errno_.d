@@ -1,9 +1,13 @@
-module dlibc.external.errnor;
-
+module errno_;
 import plat_version;
 
+static if (plat_os == OS.Linux) {
+	public import linux.errno_;
+	public import internal.linux.errno_;
+}
+
 extern (C):
-int errno;
+__gshared int errno;
 
 static if (plat_os == OS.Linux) {
 	int *__errno_location() {
@@ -18,11 +22,3 @@ static if (plat_os == OS.Linux) {
 		return &errno;
 	}
 }*/
-
-static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
-	enum {
-		EBADF = 9,
-		EINVAL = 22,
-		ERANGE = 34,
-	}
-}

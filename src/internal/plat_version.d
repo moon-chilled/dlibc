@@ -1,4 +1,4 @@
-module dlibc.internal.plat_version;
+module internal.plat_version;
 
 enum Architecture {
 	AMD64,

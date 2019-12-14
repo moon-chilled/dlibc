@@ -1,4 +1,4 @@
-module dlibc.external.freebsd.unistd;
+module freebsd.unistd;
 
 import plat_version;
 import syscaller;

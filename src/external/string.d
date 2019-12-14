@@ -1,9 +1,11 @@
-module dlibc.external.string;
+module string;
 
 import plat_version;
-import errnor;
+import errno_;
 
 extern (C):
+__gshared:
+
 //TODO: make fast
 void *memset(void *s, int c, size_t n) {
 	ubyte *ss = cast(ubyte*)s;
@@ -95,25 +97,12 @@ char *strcpy(char *dest, const(char) *src) {
 }
 
 
-// https://www.gnu.org/software/libc/manual/html_node/Error-Codes.html
-char *strerror(int num) {
-	// can't return "whatever" because d memory is weird
-	static char[128] ret;
-	switch (num) {
-		case EBADF: strcpy(ret.ptr, "Bad file descriptor."); break;
-		case EINVAL: strcpy(ret.ptr, "Invalid argument."); break;
-		case ERANGE: strcpy(ret.ptr, "Numerical result out of range."); break;
-		//TODO: others
-		default: errno = EINVAL; strcpy(ret.ptr, "Invalid error code ;-;"); break;
-	}
-
-	return ret.ptr;
-}
+// strerror() comes from dlibc.internal.<plat>.errno_, because different platforms have different sets of error codes
 
 int strerror_r(int errnum, char *buf, size_t buflen) {
 	char *ret = strerror(errnum);
 	size_t len;
 	memcpy(buf, ret, max(len = strlen(ret), buflen));
-	if (len > buflen) return errno = ERANGE;
+	if (len > buflen) return errno = Errno.ERANGE;
 	return 0;
 }

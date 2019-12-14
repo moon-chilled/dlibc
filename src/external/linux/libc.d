@@ -1,4 +1,4 @@
-module dlibc.external.linux.libc;
+module linux.libc;
 import linux.unistd;
 
 extern (C):

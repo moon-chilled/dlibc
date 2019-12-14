@@ -1,7 +1,7 @@
-module dlibc.external.stdio;
+module stdio;
 
 import allocator;
-import errnor;
+import errno_;
 import fcntl;
 import plat_version;
 import string;
@@ -51,7 +51,7 @@ FILE *fopen(const(char) *pathname, const(char) *mode) {
 	} else if (!strcmp(mode, "a+") || !strcmp(mode, "ab+") || !strcmp(mode, "a+b")) {
 		flags = O_RDWR | O_CREAT | O_APPEND;
 	} else {
-		errno = EINVAL;
+		errno = Errno.EINVAL;
 		return null;
 	}
 
@@ -70,7 +70,7 @@ FILE *fopen(const(char) *pathname, const(char) *mode) {
 
 int fclose(FILE *stream) {
 	if (!stream) {
-		errno = EBADF;
+		errno = Errno.EBADF;
 		return -1;
 	}
 
@@ -143,7 +143,7 @@ int function(FILE*) fileno = &fileno_unlocked;
 int fflush_unlocked(FILE *stream) {
 	// or other reasons why stream might be bad
 	if (!stream) {
-		errno = EBADF;
+		errno = Errno.EBADF;
 		return EOF;
 	}
 

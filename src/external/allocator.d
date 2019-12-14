@@ -1,4 +1,4 @@
-module dlibc.external.allocator;
+module allocator;
 
 // Shamelessly stolen from freebsd; libexec/rtld-elf/rtld_malloc.c
 // TODO: maybe replace with https://github.com/mjansson/rpmalloc or similar?
@@ -60,7 +60,6 @@ __gshared:
 // A reasonable default, and likely to be correct
 // but for an actual implementation, see __init_libc in musl (src/env/__libc_start_main.c)
 auto getpagesize() { return 0x1000; }
-
 
 
 //TODO: take advantage of the fact that 'size' is a power of 2
@@ -298,28 +297,23 @@ private int morepages(int n) {
 	if (pagepool_end - pagepool_start > pagesz) {
 		addr = cast(char*)roundup2(cast(long)pagepool_start, pagesz);
 		if (munmap(addr, pagepool_end - addr) != 0) {
-version (dbg_messages) {
-			rtld_fdprintf(STDERR_FILENO,
-			    "morepages: cannot munmap %p: %s\n",
-			    addr, rtld_strerror(errno));
-}
+			version (dbg_messages) {
+				rtld_fdprintf(STDERR_FILENO, "morepages: cannot munmap %p: %s\n", addr, rtld_strerror(errno));
+			}
 		}
 	}
 
 	offset = cast(int)(cast(long)pagepool_start - rounddown2(cast(long)pagepool_start, pagesz));
 
-	pagepool_start = cast(char*)mmap(null, n * pagesz, PROT_READ | PROT_WRITE,
-	    MAP_ANON | MAP_PRIVATE, -1, 0);
+	pagepool_start = cast(char*)mmap(null, n * pagesz, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (pagepool_start == MAP_FAILED) {
-version (dbg_messages) {
-		rtld_fdprintf(STDERR_FILENO,
-		    "morepages: cannot mmap anonymous memory: %s\n",
-		    rtld_strerror(errno));
-}
+		version (dbg_messages) {
+			rtld_fdprintf(STDERR_FILENO, "morepages: cannot mmap anonymous memory: %s\n", rtld_strerror(errno));
+		}
 		return (0);
 	}
 	pagepool_end = pagepool_start + n * pagesz;
 	pagepool_start += offset;
 
-	return (n);
+	return n;
 }

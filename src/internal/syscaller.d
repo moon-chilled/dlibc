@@ -1,7 +1,7 @@
-module dlibc.internal.syscaller;
+module internal.syscaller;
 
 import plat_version;
-import errnor;
+import errno_;
 
 //TODO:	fix error detection under freebsd (on error, it sets carry flag and puts the error code into rax)
 

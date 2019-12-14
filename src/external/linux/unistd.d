@@ -1,4 +1,4 @@
-module dlibc.external.linux.unistd;
+module linux.unistd;
 
 import plat_version;
 import syscaller;
