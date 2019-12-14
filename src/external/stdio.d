@@ -121,7 +121,12 @@ int putchar(int c) {
 	return ret;
 }
 
-// int clearerr_unlocked(FILE *stream)
+void clearerr_unlocked(FILE *stream) {
+	flockfile(stream);
+	stream.eof = stream.error = false;
+	funlockfile(stream);
+}
+void function(FILE*) clearerr = &clearerr_unlocked;
 
 int feof_unlocked(FILE *stream) {
 	return stream.eof;
