@@ -1,4 +1,3 @@
 - Unittests
 - Threading
-- Locked/unlocked stdio
 - MVP: run 'hello world' in standard d
