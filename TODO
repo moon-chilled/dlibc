@@ -1,3 +1,4 @@
 - Unittests
 - Threading
 - MVP: run 'hello world' in standard d
+- Binary musl compatibility?

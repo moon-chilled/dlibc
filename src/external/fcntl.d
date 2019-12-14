@@ -1,4 +1,4 @@
-module fcntl;
+module dlibc.external.fcntl;
 
 import plat_version;
 

@@ -1,4 +1,4 @@
-module linux.fcntl;
+module dlibc.external.linux.fcntl;
 
 import plat_version;
 import syscaller;

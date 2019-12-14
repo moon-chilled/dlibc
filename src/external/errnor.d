@@ -1,4 +1,4 @@
-module errnor;
+module dlibc.external.errnor;
 
 import plat_version;
 
@@ -13,10 +13,11 @@ static if (plat_os == OS.Linux) {
 	int *__error() {
 		return &errno;
 	}
-}
-
-// openbsd:
-//int *__errno();
+} /*else static if (plat_os == OS.OpenBSD) {
+	int *__errno() {
+		return &errno;
+	}
+}*/
 
 static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
 	enum {

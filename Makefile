@@ -3,25 +3,24 @@ LDFLAGS :=
 
 DC ?= dmd
 # TODO: figure out how to turn off -fPIC for static builds
-DFLAGS := -betterC -Isrc/ -g
+DFLAGS := -betterC -Isrc/external -Isrc/internal -g
 ifeq ($(DC),ldc2)
-	DFLAGS += -relocation-model=pic -flto=full -Oz
-	LD := clang
-	AR := llvm-ar
-	LDFLAGS += -flto=full -nodefaultlibs -O3
+	DFLAGS += -relocation-model=pic -Oz
 else
 	DFLAGS += -fPIC -O
 endif
 
 #TODO: autodetect these
-PLAT := linux
-ARCH := amd64
+PLAT ?= linux
+ARCH ?= amd64
 
-linux_OBJ := src/linux/unistd.o src/linux/stdio.o src/linux/libc.o src/linux/fcntl.o src/linux/sys_mman.o src/linux/sched.o
-freebsd_OBJ := src/freebsd/unistd.o
+linux_OBJ := src/external/linux/unistd.o src/external/linux/libc.o src/external/linux/fcntl.o src/external/linux/sys_mman.o src/external/linux/sched.o
+freebsd_OBJ := src/external/freebsd/unistd.o
 
-START_OBJ := src/$(PLAT)/start_$(ARCH).o
-OBJ := src/errnor.o src/assert_.o src/string.o src/strings.o src/allocator.o src/plat_version.o src/syscaller.o src/unistd.o src/fcntl.o src/sys_mman.o src/stdio.o $($(PLAT)_OBJ)
+START_OBJ := src/external/$(PLAT)/start_$(ARCH).o
+OBJ :=	src/internal/syscaller.o src/internal/plat_version.o \
+	src/external/errnor.o src/external/assert_.o src/external/string.o src/external/strings.o src/external/allocator.o src/external/unistd.o src/external/fcntl.o src/external/sys_mman.o src/external/stdio.o $($(PLAT)_OBJ)
+
 ALL_OBJ := $(OBJ) $(START_OBJ)
 
 default: all

@@ -1,4 +1,4 @@
-module linux.sys_mman;
+module dlibc.external.linux.sys_mman;
 
 import plat_version;
 import syscaller;

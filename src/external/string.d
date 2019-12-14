@@ -1,4 +1,4 @@
-module string;
+module dlibc.external.string;
 
 import plat_version;
 import errnor;

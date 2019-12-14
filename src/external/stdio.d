@@ -1,4 +1,4 @@
-module stdio;
+module dlibc.external.stdio;
 
 import allocator;
 import errnor;
@@ -7,28 +7,30 @@ import plat_version;
 import string;
 import unistd;
 
-static if (plat_os == OS.Linux) {
-	public import linux.stdio;
-}
-
 __gshared extern (C):
 
-//TODO: on linux, stdin/out/err are declared as 'extern FILE *whatever'
+//TODO: on linux/glibc, stdin/out/err are declared as 'extern FILE *whatever'
 // but on other platforms, this is not the case.  On freebsd, for instance,
 // stdio.h says 'extern FILE __sF[]; #define stdin   (&__sF[0])' (then stdout,
-// stderr in following indices)
+// stderr in following indices).  Figure out what other platforms do.
 
 struct FILE {
 	int fd;
 	bool eof = false;
 	bool error = false;
 }
+
 FILE __stdin = {fd:0};
 FILE __stdout = {fd:1};
 FILE __stderr = {fd:2};
-FILE *stdin = &__stdin;
-FILE *stdout = &__stdout;
-FILE *stderr = &__stderr;
+
+static if (plat_os == OS.Linux) {
+	FILE *stdin = &__stdin;
+	FILE *stdout = &__stdout;
+	FILE *stderr = &__stderr;
+} else static if (plat_os == OS.FreeBSD) {
+	FILE[3] __sF = [__stdin, __stdout, __stderr];
+}
 
 enum EOF = -1;
 

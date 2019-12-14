@@ -1,14 +1,12 @@
-module syscaller;
+module dlibc.internal.syscaller;
 
 import plat_version;
 import errnor;
 
 //TODO:	fix error detection under freebsd (on error, it sets carry flag and puts the error code into rax)
-//	probably want to bring it out into its own function, even if it's mostly the same, in order to
-//	avoid too much branching in something that's already too complicated for its own good (like this)
 
 //TODO: no compiler likes inlining functions which have inline asm, so turn this into a mixin template
-static if ((plat_os == OS.Linux || plat_os == OS.FreeBSD) && plat_arch == Architecture.AMD64) {
+static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
 	pragma(inline, false) extern (C) long syscall(long which, T...)(T args) {
 		long ret_from_syscall;
 

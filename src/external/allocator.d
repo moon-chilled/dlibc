@@ -1,4 +1,4 @@
-module allocator;
+module dlibc.external.allocator;
 
 // Shamelessly stolen from freebsd; libexec/rtld-elf/rtld_malloc.c
 // TODO: maybe replace with https://github.com/mjansson/rpmalloc or similar?

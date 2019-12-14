@@ -1,4 +1,4 @@
-module freebsd.unistd;
+module dlibc.external.freebsd.unistd;
 
 import plat_version;
 import syscaller;
@@ -11,9 +11,9 @@ static if (plat_arch == Architecture.AMD64) {
 	}
 
 	ssize_t read(int fd, const void *buf, size_t count) {
-		return syscall(3LU, fd, buf, count);
+		return syscall!3(fd, buf, count);
 	}
 	ssize_t write(int fd, const void *buf, size_t count) {
-		return syscall(4LU, fd, buf, count);
+		return syscall!4(fd, buf, count);
 	}
 }

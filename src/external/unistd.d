@@ -1,4 +1,4 @@
-module unistd;
+module dlibc.external.unistd;
 
 import plat_version;
 
