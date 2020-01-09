@@ -3,12 +3,21 @@ LDFLAGS :=
 
 DC ?= dmd
 # TODO: figure out how to turn off -fPIC for static builds
-DFLAGS := -betterC -Isrc/external -Isrc/internal -Isrc -g
+DFLAGS := -Isrc/external -Isrc/internal -Isrc -g
 ifeq ($(DC),ldc2)
-	DFLAGS += -relocation-model=pic -Oz
+	DFLAGS += -betterC -relocation-model=pic -Oz
+else ifeq ($(DC),gdc)
+	DFLAGS += -fno-druntime -fPIC -Os -masm=intel
 else
-	DFLAGS += -fPIC -O
+	DFLAGS += -betterC -fPIC -O
 endif
+
+ifeq ($(DC),gdc)
+	dasho = -o
+else
+	dasho = -of=
+endif
+
 
 #TODO: autodetect these
 PLAT ?= linux
@@ -18,7 +27,7 @@ linux_OBJ := src/internal/linux/errno_.o src/external/linux/errno_.o src/externa
 freebsd_OBJ := src/external/freebsd/unistd.o
 
 START_OBJ := src/external/$(PLAT)/start_$(ARCH).o
-OBJ :=	src/internal/syscaller.o src/internal/plat_version.o \
+OBJ :=	src/internal/syscaller.o src/internal/plat_version.o src/internal/stdarg.o \
 	src/external/errno_.o src/external/assert_.o src/external/string.o src/external/strings.o src/external/allocator.o src/external/unistd.o src/external/fcntl.o src/external/sys_mman.o src/external/stdio.o $($(PLAT)_OBJ)
 
 ALL_OBJ := $(OBJ) $(START_OBJ)
@@ -28,7 +37,7 @@ default: all
 .SUFFIXES: .d
 
 .d.o:
-	$(DC) -c $(DFLAGS) -of=$@ $<
+	$(DC) -c $(DFLAGS) $(dasho)$@ $<
 
 all: static dynamic
 

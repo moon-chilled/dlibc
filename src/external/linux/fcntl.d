@@ -2,10 +2,11 @@ module linux.fcntl;
 
 import plat_version;
 import syscaller;
+import stdarg;
 
 extern (C):
 
-static if (plat_arch == Architecture.AMD64) {
+static if (plat_os == OS.Linux && plat_arch == Architecture.AMD64) {
 	enum {
 		O_RDONLY = 0x0,
 		O_WRONLY = 0x1,
@@ -23,5 +24,12 @@ static if (plat_arch == Architecture.AMD64) {
 	}
 	int close(int fd) {
 		return cast(int)syscall!3(fd);
+	}
+	int fcntl(int fd, int cmd, ...) {
+		va_list ap = void;
+		va_start(ap, cmd);
+		va_arg!int(ap);
+		va_end(ap);
+		return 5;
 	}
 }
