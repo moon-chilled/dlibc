@@ -12,10 +12,7 @@ version (GNU) {
 	@attribute("forceinline") extern (C) long syscall(long which, T...)(T args) {
 		long ret_from_syscall;
 
-		asm {
-			"mov rax, %0"
-			:: "r" which;
-		};
+		asm { "mov rax, %0" :: "r" which; };
 
 		/*
 		 * as it turns out, by a mad co-incidence (;o), the parameter
@@ -25,11 +22,7 @@ version (GNU) {
 		 * but RCX for functions.  That means that all the other
 		 * parameters are /already where they need to be/!  Magic!!
 		 */
-		static if (args.length >= 4) {
-			asm {
-				"mov r10, rcx";
-			};
-		}
+		static if (args.length >= 4) asm {"mov r10, rcx";};
 
 		asm {"
 			syscall;
@@ -56,9 +49,7 @@ had_error%=:
 	pragma(inline, false) extern (C) long syscall(long which, T...)(T args) {
 		long ret_from_syscall;
 
-		asm {
-			mov RAX, which;
-		}
+		asm { mov RAX, which; }
 
 		/*
 		 * as it turns out, by a mad co-incidence (;o), the parameter
@@ -68,11 +59,7 @@ had_error%=:
 		 * but RCX for functions.  That means that all the other
 		 * parameters are /already where they need to be/!  Magic!!
 		 */
-		static if (args.length >= 4) {
-			asm {
-				mov R10, RCX;
-			}
-		}
+		static if (args.length >= 4) asm { mov R10, RCX; }
 
 		asm {
 			syscall;
